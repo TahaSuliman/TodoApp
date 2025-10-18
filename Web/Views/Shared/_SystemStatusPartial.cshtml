@@ -1,0 +1,34 @@
+﻿@{
+    var isHealthy = ViewBag.IsHealthy ?? false;
+    var databaseStatus = ViewBag.DatabaseStatus ?? "غير معروف";
+    var databaseMessage = ViewBag.DatabaseMessage ?? "";
+}
+
+<div class="alert @(isHealthy ? "alert-success" : "alert-warning") alert-dismissible fade show" role="alert">
+    <h4 class="alert-heading">
+        @(isHealthy ? "🟢" : "🟡") حالة النظام
+    </h4>
+    <hr>
+    <p class="mb-0">
+        <strong>قاعدة البيانات:</strong> @databaseStatus
+    </p>
+    <p class="mb-0">
+        <small>@databaseMessage</small>
+    </p>
+
+    @if (!isHealthy)
+    {
+        <hr>
+        <p class="mb-0">
+            <small>
+                ⚠️ بعض الميزات قد لا تكون متاحة حالياً. يرجى المحاولة لاحقاً.
+            </small>
+        </p>
+    }
+
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<small class="text-muted">
+    آخر تحديث: @DateTime.Now.ToString("hh:mm:ss tt")
+</small>

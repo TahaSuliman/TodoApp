@@ -1,0 +1,62 @@
+﻿
+
+@model IEnumerable<Application.DTOs.TodoDto>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewData["Title"] = "قائمة المهام";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>قائمة المهام</h2>
+        <a asp-action="Create" class="btn btn-primary">إضافة مهمة جديدة</a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        @foreach (var todo in Model)
+        {
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card @(todo.IsComplete ? "border-success" : "")">
+                    <div class="card-body">
+                        <h5 class="card-title @(todo.IsComplete ? "text-decoration-line-through" : "")">
+                            @todo.Title
+                        </h5>
+                        <p class="card-text">@todo.Description</p>
+                        <p class="text-muted small">المستخدم: @todo.UserName</p>
+                        <div class="d-flex gap-2">
+                            <form asp-action="Toggle" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@todo.Id" />
+                                <button type="submit" class="btn btn-sm @(todo.IsComplete ? "btn-warning" : "btn-success")">
+                                    @(todo.IsComplete ? "إلغاء الإكمال" : "تم")
+                                </button>
+                            </form>
+                            <a asp-action="Edit" asp-route-id="@todo.Id" class="btn btn-sm btn-primary">تعديل</a>
+                            <form asp-action="Delete" method="post" class="d-inline"
+                                  onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
+                                <input type="hidden" name="id" value="@todo.Id" />
+                                <button type="submit" class="btn btn-sm btn-danger">حذف</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,84 @@
+﻿
+
+
+@model Application.DTOs.UserDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewData["Title"] = "تفاصيل المستخدم";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-person-badge"></i> تفاصيل المستخدم
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4 text-end">
+                            <strong><i class="bi bi-hash"></i> الرقم:</strong>
+                        </div>
+                        <div class="col-md-8">
+                            <span class="badge bg-secondary">@Model.Id</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4 text-end">
+                            <strong><i class="bi bi-person"></i> الاسم:</strong>
+                        </div>
+                        <div class="col-md-8">
+                            @Model.Name
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4 text-end">
+                            <strong><i class="bi bi-envelope"></i> البريد الإلكتروني:</strong>
+                        </div>
+                        <div class="col-md-8">
+                            <a href="mailto:@Model.Email">@Model.Email</a>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4 text-end">
+                            <strong><i class="bi bi-calendar-date"></i> تاريخ الميلاد:</strong>
+                        </div>
+                        <div class="col-md-8">
+                            @Model.BirthDate.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("ar-SA"))
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4 text-end">
+                            <strong><i class="bi bi-hourglass-split"></i> العمر:</strong>
+                        </div>
+                        <div class="col-md-8">
+                            <span class="badge bg-info fs-6">@Model.BirthDate سنة</span>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> العودة للقائمة
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                            <i class="bi bi-pencil-square"></i> تعديل
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> حذف
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

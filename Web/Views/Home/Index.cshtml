@@ -1,0 +1,324 @@
+﻿
+@{
+    ViewData["Title"] = "Home Page";
+    var isHealthy = ViewBag.IsHealthy ?? false;
+}
+
+
+<div class="container mt-5">
+    <div class="text-center">
+        <h1 class="display-4">مرحباً بك في TodoApp! 🎉</h1>
+        <p class="lead">تطبيق إدارة المهام الخاص بك</p>
+    </div>
+
+    <!-- حالة قاعدة البيانات -->
+    <!-- حالة قاعدة البيانات -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-8" id="system-status-container">
+            <!-- سيتم تحديث هذا الجزء فقط -->
+            @await Html.PartialAsync("_SystemStatusPartial", new { isHealthy = isHealthy })
+        </div>
+    </div>
+
+    @* <div class="row justify-content-center mt-4">
+        <div class="col-md-8">
+            <div class="alert @(isHealthy ? "alert-success" : "alert-warning") alert-dismissible fade show" role="alert">
+                <h4 class="alert-heading">
+                    @(isHealthy ? "🟢" : "🟡") حالة النظام
+                </h4>
+                <hr>
+                <p class="mb-0">
+                    <strong>قاعدة البيانات:</strong> @ViewBag.DatabaseStatus
+                </p>
+                <p class="mb-0">
+                    <small>@ViewBag.DatabaseMessage</small>
+                </p>
+
+                @if (!isHealthy)
+                {
+                    <hr>
+                    <p class="mb-0">
+                        <small>
+                            ⚠️ بعض الميزات قد لا تكون متاحة حالياً. يرجى المحاولة لاحقاً.
+                        </small>
+                    </p>
+                }
+
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+ *@
+    <!-- البطاقات الرئيسية -->
+    <div class="row mt-4">
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-person-circle" style="font-size: 3rem; color: #007bff;"></i>
+                    <h5 class="card-title mt-3">المستخدمين</h5>
+                    <p class="card-text">إدارة حسابات المستخدمين</p>
+                    <a href="@Url.Action("Index", "User")" class="btn btn-primary @(isHealthy ? "" : "disabled")">
+                        عرض المستخدمين
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-list-check" style="font-size: 3rem; color: #28a745;"></i>
+                    <h5 class="card-title mt-3">المهام</h5>
+                    <p class="card-text">إدارة قائمة المهام</p>
+                    <a href="@Url.Action("Index", "Todo")" class="btn btn-success @(isHealthy ? "" : "disabled")">
+                        عرض المهام
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-heart-pulse" style="font-size: 3rem; color: #dc3545;"></i>
+                    <h5 class="card-title mt-3">حالة النظام</h5>
+                    <p class="card-text">فحص صحة الخدمات</p>
+                    <a href="/health" target="_blank" class="btn btn-danger">
+                        عرض التفاصيل
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- معلومات إضافية -->
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">📊 لوحة المراقبة</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>🔍 Grafana Dashboard</h6>
+                            <p>
+                                <a href="http://localhost:3000" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    فتح Grafana
+                                </a>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>📈 Health Checks</h6>
+                            <p>
+                                <a href="/health-ui" target="_blank" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-heart-pulse"></i> Health Dashboard
+                                </a>
+                                <a href="/health" target="_blank" class="btn btn-sm btn-outline-success">
+                                    Health API
+                                </a>
+                                <a href="/health/ready" target="_blank" class="btn btn-sm btn-outline-warning">
+                                    Readiness
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // تحديث حالة النظام كل 30 ثانية
+        async function updateSystemStatus() {
+            try {
+                const response = await fetch('@Url.Action("GetSystemStatus", "Home")');
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const html = await response.text();
+                document.getElementById('system-status-container').innerHTML = html;
+
+                console.log('✅ System status updated at:', new Date().toLocaleTimeString('ar-SA'));
+            } catch (error) {
+                console.error('❌ Failed to update system status:', error);
+            }
+        }
+
+        // تحديث كل 30 ثانية
+        setInterval(updateSystemStatus, 30000);
+
+        // تحديث فوري عند تحميل الصفحة (اختياري)
+        // updateSystemStatus();
+    </script>
+}
+
+
+@* 
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // تحديث حالة النظام كل 30 ثانية
+        function updateSystemStatus() {
+            $.ajax({
+                url: '@Url.Action("GetSystemStatus", "Home")',
+                type: 'GET',
+                success: function(data) {
+                    $('#system-status-container').html(data);
+                    console.log('✅ System status updated');
+                },
+                error: function(xhr, status, error) {
+                    console.error('❌ Failed to update system status:', error);
+                }
+            });
+        }
+
+        // تحديث كل 30 ثانية
+        setInterval(updateSystemStatus, 30000);
+
+        // تحديث فوري عند تحميل الصفحة (اختياري)
+        // updateSystemStatus();
+    </script>
+}
+ *@
+
+
+@* @section Scripts {
+    <script>
+        // Auto-refresh database status every 30 seconds
+        setInterval(function() {
+            location.reload();
+        }, 30000);
+    </script>
+}
+ *@
+
+
+@* <div class="container mt-5">
+    <div class="text-center">
+        <h1 class="display-4">مرحباً بك في TodoApp! 🎉</h1>
+        <p class="lead">تطبيق إدارة المهام الخاص بك</p>
+    </div>
+
+    <!-- حالة قاعدة البيانات -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-8">
+            <div class="alert @(isHealthy ? "alert-success" : "alert-warning") alert-dismissible fade show" role="alert">
+                <h4 class="alert-heading">
+                    @(isHealthy ? "🟢" : "🟡") حالة النظام
+                </h4>
+                <hr>
+                <p class="mb-0">
+                    <strong>قاعدة البيانات:</strong> @ViewBag.DatabaseStatus
+                </p>
+                <p class="mb-0">
+                    <small>@ViewBag.DatabaseMessage</small>
+                </p>
+
+                @if (!isHealthy)
+                {
+                    <hr>
+                    <p class="mb-0">
+                        <small>
+                            ⚠️ بعض الميزات قد لا تكون متاحة حالياً. يرجى المحاولة لاحقاً.
+                        </small>
+                    </p>
+                }
+
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- البطاقات الرئيسية -->
+    <div class="row mt-4">
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-person-circle" style="font-size: 3rem; color: #007bff;"></i>
+                    <h5 class="card-title mt-3">المستخدمين</h5>
+                    <p class="card-text">إدارة حسابات المستخدمين</p>
+                    <a href="@Url.Action("Index", "User")" class="btn btn-primary @(isHealthy ? "" : "disabled")">
+                        عرض المستخدمين
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-list-check" style="font-size: 3rem; color: #28a745;"></i>
+                    <h5 class="card-title mt-3">المهام</h5>
+                    <p class="card-text">إدارة قائمة المهام</p>
+                    <a href="@Url.Action("Index", "Todo")" class="btn btn-success @(isHealthy ? "" : "disabled")">
+                        عرض المهام
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-heart-pulse" style="font-size: 3rem; color: #dc3545;"></i>
+                    <h5 class="card-title mt-3">حالة النظام</h5>
+                    <p class="card-text">فحص صحة الخدمات</p>
+                    <a href="/health" target="_blank" class="btn btn-danger">
+                        عرض التفاصيل
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- معلومات إضافية -->
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">📊 لوحة المراقبة</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>🔍 Grafana Dashboard</h6>
+                            <p>
+                                <a href="http://localhost:3000" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    فتح Grafana
+                                </a>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>📈 Health Checks</h6>
+                            <p>
+                                <a href="/health" target="_blank" class="btn btn-sm btn-outline-success">
+                                    Health Status
+                                </a>
+                                <a href="/health/ready" target="_blank" class="btn btn-sm btn-outline-warning">
+                                    Readiness
+                                </a>
+                                <a href="/health/live" target="_blank" class="btn btn-sm btn-outline-info">
+                                    Liveness
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Auto-refresh database status every 30 seconds
+        setInterval(function() {
+            location.reload();
+        }, 30000);
+    </script>
+} *@

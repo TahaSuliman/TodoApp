@@ -1,0 +1,48 @@
+﻿@model Application.DTOs.UpdateTodoDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewData["Title"] = "تحديث مهمة";
+}
+
+<div class="container mt-4">
+    <h2>تحديث مهمة جديدة</h2>
+
+    <form asp-action="Edit" method="post" class="mt-3">
+        <input asp-for="Id" type="hidden" />
+
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label">العنوان</label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label">الوصف</label>
+            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="UserId" class="form-label">المستخدم</label>
+            <select asp-for="UserId" class="form-select">
+                <option value="">-- اختر مستخدم --</option>
+                @foreach (var user in (IEnumerable<Application.DTOs.UserDto>)ViewBag.Users)
+                {
+                    <option value="@user.Id" selected="@(user.Id == Model.UserId)">
+                        @user.Name
+                    </option>
+                }
+            </select>
+            
+            <span asp-validation-for="UserId" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">حفظ</button>
+        <a asp-action="Index" class="btn btn-secondary">إلغاء</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
