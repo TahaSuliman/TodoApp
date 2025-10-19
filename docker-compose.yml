@@ -7,10 +7,10 @@ services:
     container_name: todoapp-sqlserver
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=Pass!!alldb
+      - SA_PASSWORD=${DB_PASSWORD:-Pass!!alldb}
       - MSSQL_PID=Developer
     ports:
-      - "1414:1433"
+      - "${SQL_PORT:-1414}:1433"
     volumes:
       - sqldata:/var/opt/mssql
     healthcheck:
@@ -25,16 +25,15 @@ services:
 
   # ==================== Web Application ====================
   web:
-    build: 
-      context: .
-      dockerfile: Web/Dockerfile
+    image: ${DOCKER_IMAGE:-tsramadan/todoapp-web}:${BUILD_NUMBER:-latest}
     container_name: todoapp-web
     ports:
-      - "8080:8080"  # ⬅️ غيّر من 49177:8080 إلى 8080:8080
+      - "${WEB_PORT:-8080}:8080"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Server=mss-sqlserver;Database=TodoCleanCode;User Id=sa;Password=Pass!!alldb;Encrypt=False;TrustServerCertificate=True;
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
+      - ConnectionStrings__DefaultConnection=${DB_CONNECTION_STRING:-Server=mss-sqlserver;Database=TodoCleanCode;User Id=sa;Password=Pass!!alldb;Encrypt=False;TrustServerCertificate=True;}
       - ASPNETCORE_URLS=http://+:8080
+      - DOTNET_RUNNING_IN_CONTAINER=true
     depends_on:
       mss-sqlserver:
         condition: service_healthy
@@ -43,7 +42,6 @@ services:
     restart: unless-stopped
     networks:
       - todoapp-network
-    # مشاركة مجلد السجلات مع Promtail
     volumes:
       - ./logs:/app/logs
 
@@ -52,7 +50,7 @@ services:
     image: grafana/loki:2.9.6
     container_name: loki
     ports:
-      - "3100:3100"
+      - "${LOKI_PORT:-3100}:3100"
     command: -config.file=/etc/loki/local-config.yaml
     networks:
       - todoapp-network
@@ -77,9 +75,9 @@ services:
     image: grafana/grafana:10.2.3
     container_name: grafana
     ports:
-      - "3000:3000"
+      - "${GRAFANA_PORT:-3000}:3000"
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
     volumes:
       - grafana-data:/var/lib/grafana
     networks:
@@ -97,6 +95,108 @@ volumes:
 networks:
   todoapp-network:
     driver: bridge
+
+#=======================================
+
+# version: '3.8'
+
+# services:
+#   # ==================== SQL Server ====================
+#   mss-sqlserver:
+#     image: mcr.microsoft.com/mssql/server:2022-latest
+#     container_name: todoapp-sqlserver
+#     environment:
+#       - ACCEPT_EULA=Y
+#       - SA_PASSWORD=Pass!!alldb
+#       - MSSQL_PID=Developer
+#     ports:
+#       - "1414:1433"
+#     volumes:
+#       - sqldata:/var/opt/mssql
+#     healthcheck:
+#       test: ["CMD-SHELL", "timeout 1 bash -c '</dev/tcp/localhost/1433' || exit 1"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 10
+#       start_period: 60s
+#     restart: unless-stopped
+#     networks:
+#       - todoapp-network
+
+#   # ==================== Web Application ====================
+#   web:
+#     build: 
+#       context: .
+#       dockerfile: Web/Dockerfile
+#     container_name: todoapp-web
+#     ports:
+#       - "8080:8080"  # ⬅️ غيّر من 49177:8080 إلى 8080:8080
+#     environment:
+#       - ASPNETCORE_ENVIRONMENT=Development
+#       - ConnectionStrings__DefaultConnection=Server=mss-sqlserver;Database=TodoCleanCode;User Id=sa;Password=Pass!!alldb;Encrypt=False;TrustServerCertificate=True;
+#       - ASPNETCORE_URLS=http://+:8080
+#     depends_on:
+#       mss-sqlserver:
+#         condition: service_healthy
+#       loki:
+#         condition: service_started
+#     restart: unless-stopped
+#     networks:
+#       - todoapp-network
+#     # مشاركة مجلد السجلات مع Promtail
+#     volumes:
+#       - ./logs:/app/logs
+
+#   # ==================== Loki (تجميع السجلات) ====================
+#   loki:
+#     image: grafana/loki:2.9.6
+#     container_name: loki
+#     ports:
+#       - "3100:3100"
+#     command: -config.file=/etc/loki/local-config.yaml
+#     networks:
+#       - todoapp-network
+#     restart: unless-stopped
+
+#   # ==================== Promtail (قراءة السجلات) ====================
+#   promtail:
+#     image: grafana/promtail:2.9.6
+#     container_name: promtail
+#     volumes:
+#       - ./logs:/var/log/app
+#       - ./promtail-config.yml:/etc/promtail/config.yml
+#     command: -config.file=/etc/promtail/config.yml
+#     networks:
+#       - todoapp-network
+#     depends_on:
+#       - loki
+#     restart: unless-stopped
+
+#   # ==================== Grafana (عرض السجلات) ====================
+#   grafana:
+#     image: grafana/grafana:10.2.3
+#     container_name: grafana
+#     ports:
+#       - "3000:3000"
+#     environment:
+#       - GF_SECURITY_ADMIN_PASSWORD=admin
+#     volumes:
+#       - grafana-data:/var/lib/grafana
+#     networks:
+#       - todoapp-network
+#     depends_on:
+#       - loki
+#     restart: unless-stopped
+
+# volumes:
+#   sqldata:
+#     driver: local
+#   grafana-data:
+#     driver: local
+
+# networks:
+#   todoapp-network:
+#     driver: bridge
 
 
 #=======================================
