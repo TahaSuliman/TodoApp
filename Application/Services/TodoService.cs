@@ -44,7 +44,7 @@ namespace Application.Services
             {
                 var todo = await _todoRepo.GetByIdAsync(id);
                 if (todo == null)
-                    return Result<TodoDto>.Failure("❌ المهمة غير موجودة");
+                    return Result<TodoDto>.Failure("المهمة غير موجودة");
 
                 return Result<TodoDto>.Success(MapToDto(todo));
             }
@@ -109,11 +109,11 @@ namespace Application.Services
 
                 if (ExceptionHelper.IsDatabaseConnectionError(ex))
                 {
-                    userMessage = "⚠️ فشل الاتصال بقاعدة البيانات. لا يمكن إنشاء المهمة حالياً.";
+                    userMessage = " فشل الاتصال بقاعدة البيانات. لا يمكن إنشاء المهمة حالياً.";
                 }
                 else if (ExceptionHelper.IsForeignKeyError(ex))
                 {
-                    userMessage = "🔗 المستخدم المحدد غير موجود. تأكد من صحة معرّف المستخدم.";
+                    userMessage = " المستخدم المحدد غير موجود. تأكد من صحة معرّف المستخدم.";
                 }
                 else
                 {
@@ -130,7 +130,7 @@ namespace Application.Services
             {
                 var todo = await _todoRepo.GetByIdAsync(dto.Id);
                 if (todo == null)
-                    return Result<bool>.Failure("❌ المهمة غير موجودة");
+                    return Result<bool>.Failure("المهمة غير موجودة");
 
                 todo.Title = dto.Title;
                 todo.Description = dto.Description;
@@ -153,7 +153,7 @@ namespace Application.Services
 
                 if (ExceptionHelper.IsForeignKeyError(ex))
                 {
-                    userMessage = "🔗 المستخدم المحدد غير موجود. تأكد من صحة معرّف المستخدم.";
+                    userMessage = "المستخدم المحدد غير موجود. تأكد من صحة معرّف المستخدم.";
                 }
                 else
                 {
@@ -191,7 +191,7 @@ namespace Application.Services
             {
                 var todo = await _todoRepo.GetByIdAsync(id);
                 if (todo == null)
-                    return Result<bool>.Failure("❌ المهمة غير موجودة");
+                    return Result<bool>.Failure(" المهمة غير موجودة");
 
                 todo.IsComplete = !todo.IsComplete;
                 await _todoRepo.UpdateAsync(todo);
@@ -227,157 +227,3 @@ namespace Application.Services
 }
 //================================
 
-//namespace Application.Services
-//{
-//    public class TodoService : ITodoService
-//    {
-//        private readonly ITodoRepository _todoRepo;
-//        private readonly ILogger<TodoService> _logger;
-
-//        public TodoService(ITodoRepository todoRepo, ILogger<TodoService> logger)
-//        {
-//            _todoRepo = todoRepo;
-//            _logger = logger;
-//        }
-
-//        public async Task<Result<IEnumerable<TodoDto>>> GetAllAsync()
-//        {
-//            try
-//            {
-//                var todos = await _todoRepo.GetAllAsync();
-//                var dtos = todos.Select(MapToDto);
-//                return Result<IEnumerable<TodoDto>>.Success(dtos);
-//            }
-//            catch (Exception ex)
-//            {
-//                _logger.LogError(ex, "Error getting all todos");
-//                return Result<IEnumerable<TodoDto>>.Failure("فشل في جلب المهام");
-//            }
-//        }
-
-//        public async Task<Result<TodoDto>> GetByIdAsync(int id)
-//        {
-//            try
-//            {
-//                var todo = await _todoRepo.GetByIdAsync(id);
-//                if (todo == null)
-//                    return Result<TodoDto>.Failure("المهمة غير موجودة");
-
-//                return Result<TodoDto>.Success(MapToDto(todo));
-//            }
-//            catch (Exception ex)
-//            {
-//                _logger.LogError(ex, "Error getting todo {TodoId}", id);
-//                return Result<TodoDto>.Failure("فشل في جلب المهمة");
-//            }
-//        }
-
-//        public async Task<Result<IEnumerable<TodoDto>>> GetByUserIdAsync(int userId)
-//        {
-//            try
-//            {
-//                var todos = await _todoRepo.GetByUserIdAsync(userId);
-//                var dtos = todos.Select(MapToDto);
-//                return Result<IEnumerable<TodoDto>>.Success(dtos);
-//            }
-//            catch (Exception ex)
-//            {
-//                _logger.LogError(ex, "Error getting todos for user {UserId}", userId);
-//                return Result<IEnumerable<TodoDto>>.Failure("فشل في جلب مهام المستخدم");
-//            }
-//        }
-
-//        public async Task<Result<TodoDto>> CreateAsync(CreateTodoDto dto)
-//        {
-//            try
-//            {
-//                var todo = new Todo
-//                {
-//                    Title = dto.Title,
-//                    Description = dto.Description,
-//                    UserId = dto.UserId,
-//                    IsComplete = false
-//                };
-
-//                var created = await _todoRepo.AddAsync(todo);
-//                _logger.LogInformation("Todo created: {TodoId}", created.Id);
-//                return Result<TodoDto>.Success(MapToDto(created));
-//            }
-//            catch (Exception ex)
-//            {
-//                _logger.LogError(ex, "Error creating todo");
-//                return Result<TodoDto>.Failure("فشل في إنشاء المهمة");
-//            }
-//        }
-
-//        public async Task<Result<bool>> UpdateAsync(UpdateTodoDto dto)
-//        {
-//            try
-//            {
-//                var todo = await _todoRepo.GetByIdAsync(dto.Id);
-//                if (todo == null)
-//                    return Result<bool>.Failure("المهمة غير موجودة");
-
-//                todo.Title = dto.Title;
-//                todo.Description = dto.Description;
-//                todo.IsComplete = dto.IsComplete;
-//                todo.UserId = dto.UserId;
-
-//                await _todoRepo.UpdateAsync(todo);
-//                _logger.LogInformation("Todo updated: {TodoId}", dto.Id);
-//                return Result<bool>.Success(true);
-//            }
-//            catch (Exception ex)
-//            {
-//                _logger.LogError(ex, "Error updating todo {TodoId}", dto.Id);
-//                return Result<bool>.Failure("فشل في تحديث المهمة");
-//            }
-//        }
-
-//        public async Task<Result<bool>> DeleteAsync(int id)
-//        {
-//            try
-//            {
-//                await _todoRepo.DeleteAsync(id);
-//                _logger.LogInformation("Todo deleted: {TodoId}", id);
-//                return Result<bool>.Success(true);
-//            }
-//            catch (Exception ex)
-//            {
-//                _logger.LogError(ex, "Error deleting todo {TodoId}", id);
-//                return Result<bool>.Failure("فشل في حذف المهمة");
-//            }
-//        }
-
-//        public async Task<Result<bool>> ToggleCompleteAsync(int id)
-//        {
-//            try
-//            {
-//                var todo = await _todoRepo.GetByIdAsync(id);
-//                if (todo == null)
-//                    return Result<bool>.Failure("المهمة غير موجودة");
-
-//                todo.IsComplete = !todo.IsComplete;
-//                await _todoRepo.UpdateAsync(todo);
-//                _logger.LogInformation("Todo toggled: {TodoId}", id);
-//                return Result<bool>.Success(true);
-//            }
-//            catch (Exception ex)
-//            {
-//                _logger.LogError(ex, "Error toggling todo {TodoId}", id);
-//                return Result<bool>.Failure("فشل في تغيير حالة المهمة");
-//            }
-//        }
-
-//        private static TodoDto MapToDto(Todo todo) => new()
-//        {
-//            Id = todo.Id,
-//            Title = todo.Title,
-//            Description = todo.Description,
-//            IsComplete = todo.IsComplete,
-//            UserId = todo.UserId,
-//            AvatarImagePath = todo.AvatarImagePath,
-//            UserName = todo.User?.Name ?? ""
-//        };
-//    }
-//}
