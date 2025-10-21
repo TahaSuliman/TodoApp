@@ -25,7 +25,7 @@ services:
 
   # ==================== Web Application ====================
   web:
-    image: ${DOCKER_IMAGE:-tsramadan/todoapp-web}:${BUILD_NUMBER:-latest}
+    image: ${DOCKER_IMAGE:-tsramadan/todoapp-web}:${IMAGE_TAG:-latest}
     container_name: todoapp-web
     ports:
       - "${WEB_PORT:-8080}:8080"
