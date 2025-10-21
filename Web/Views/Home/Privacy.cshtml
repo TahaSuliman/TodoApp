@@ -1,6 +1,155 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <h1 class="display-4 mb-4">@ViewData["Title"]</h1>
+            <p class="lead text-muted mb-5">Last updated: @DateTime.Now.ToString("MMMM dd, yyyy")</p>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">📋 Information We Collect</h2>
+                    <p>
+                        We collect information that you provide directly to us when using TodoApp, including:
+                    </p>
+                    <ul>
+                        <li>Account information (name, email address)</li>
+                        <li>Todo items and task data you create</li>
+                        <li>Usage data and preferences</li>
+                        <li>Device and browser information</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">🔒 How We Use Your Information</h2>
+                    <p>We use the collected information to:</p>
+                    <ul>
+                        <li>Provide, maintain, and improve our services</li>
+                        <li>Personalize your experience</li>
+                        <li>Send you important updates and notifications</li>
+                        <li>Protect against unauthorized access</li>
+                        <li>Analyze usage patterns to enhance functionality</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">🛡️ Data Security</h2>
+                    <p>
+                        We implement appropriate technical and organizational measures to protect your personal data against
+                        unauthorized access, alteration, disclosure, or destruction. This includes:
+                    </p>
+                    <ul>
+                        <li>Encrypted data transmission (HTTPS/SSL)</li>
+                        <li>Secure database storage</li>
+                        <li>Regular security audits</li>
+                        <li>Access controls and authentication</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">🍪 Cookies and Tracking</h2>
+                    <p>
+                        We use cookies and similar technologies to enhance your experience, including:
+                    </p>
+                    <ul>
+                        <li><strong>Essential cookies:</strong> Required for authentication and security</li>
+                        <li><strong>Functional cookies:</strong> Remember your preferences</li>
+                        <li><strong>Analytics cookies:</strong> Help us understand how you use our service</li>
+                    </ul>
+                    <p class="mb-0">You can control cookies through your browser settings.</p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">🌐 Third-Party Services</h2>
+                    <p>
+                        We may use third-party services for analytics, hosting, and functionality.
+                        These services have their own privacy policies governing the use of your information.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">✅ Your Rights</h2>
+                    <p>You have the right to:</p>
+                    <ul>
+                        <li>Access your personal data</li>
+                        <li>Correct inaccurate information</li>
+                        <li>Request deletion of your data</li>
+                        <li>Export your data</li>
+                        <li>Opt-out of marketing communications</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">👶 Children's Privacy</h2>
+                    <p>
+                        Our service is not intended for children under 13 years of age.
+                        We do not knowingly collect personal information from children under 13.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">🔄 Changes to This Policy</h2>
+                    <p>
+                        We may update this privacy policy from time to time. We will notify you of any changes
+                        by posting the new policy on this page and updating the "Last updated" date.
+                    </p>
+                </div>
+            </div>
+
+            <div class="alert alert-info" role="alert">
+                <h2 class="h5 mb-3">📧 Contact Us</h2>
+                <p class="mb-0">
+                    If you have any questions about this Privacy Policy, please contact us at:
+                    <br>
+                    <strong>Email:</strong> privacy@todoapp.com
+                    <br>
+                    <strong>Address:</strong> Dubai, UAE
+                </p>
+            </div>
+
+            <div class="text-center mt-5">
+                <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg">
+                    <i class="bi bi-arrow-left"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 12px;
+        transition: transform 0.2s;
+    }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+    .card-body h2 {
+        color: #0d6efd;
+        font-weight: 600;
+    }
+
+    .lead {
+        font-size: 1.1rem;
+    }
+</style>

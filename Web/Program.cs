@@ -195,7 +195,32 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<ErrorHandlingMiddleware>();
+//===============================
 
+// قراءة Build Info
+var buildNumber = Environment.GetEnvironmentVariable("BUILD_NUMBER") ?? "dev";
+var buildDate = Environment.GetEnvironmentVariable("BUILD_DATE") ?? DateTime.Now.ToString();
+
+// منع cache للصفحات الديناميكية
+app.Use(async (context, next) =>
+{
+    if (!context.Request.Path.StartsWithSegments("/css") &&
+        !context.Request.Path.StartsWithSegments("/js") &&
+        !context.Request.Path.StartsWithSegments("/images"))
+    {
+        context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+        context.Response.Headers["X-Build-Version"] = buildNumber;
+    }
+    await next();
+});
+
+// إضافة endpoint لمعلومات الإصدار
+app.MapGet("/version", () => new
+{
+    Version = buildNumber,
+    BuildDate = buildDate,
+    ImageId = Environment.GetEnvironmentVariable("IMAGE_ID")
+});
 // === Health Check Endpoints ===
 app.MapHealthChecks("/health", new HealthCheckOptions
 {
